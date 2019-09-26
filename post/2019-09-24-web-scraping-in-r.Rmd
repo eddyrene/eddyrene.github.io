@@ -88,12 +88,11 @@ data[2:4] <-data %>% select(2:4)%>%
 #ploting values 
 library(plotly)
 library(dplyr)
-data
+
 dates1 <- strptime(as.character(data$Fecha), "%Y-%m-%d %H:%M:%S")
 data <- data[,2:ncol(data)]  #tomamos la parte del dataframe con los valores
 data <- data.frame(date=dates1,data)  #Añadimos las fechas
 
-data
 plot_ly(data,x = ~date)%>%
   add_lines(y=data$Ejecutado, name=colnames(data)[2])%>%
   add_lines(y=data$Prog..Diaria,name=colnames(data)[3])%>%
