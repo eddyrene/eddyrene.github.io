@@ -1,0 +1,384 @@
+<!DOCTYPE html>
+<html class="no-js" lang="es">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Web Scraping con R  - Eddy Rene</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+	<meta property="og:title" content="Web Scraping con R " />
+<meta property="og:description" content="Obten datos de una pagina web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/web-scraping-in-r/" />
+<meta property="article:published_time" content="2019-09-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-09-21T00:00:00+00:00" /><meta property="og:site_name" content="Eddy Rene" />
+
+	<meta name="twitter:card" content="summary"/>
+<meta name="twitter:title" content="Web Scraping con R "/>
+<meta name="twitter:description" content="Obten datos de una pagina web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas."/>
+
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container">
+		<div class="logo">
+			<a class="logo__link" href="/" title="Eddy Rene" rel="home">
+				<div class="logo__title">Eddy Rene</div>
+				<div class="logo__tagline">Analisis de datos - Estilo de Vida - Pensamientos</div>
+			</a>
+		</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menú</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">Sobre Eddy</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Web Scraping con R </h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg>
+	<time class="meta__text" datetime="2019-09-21T00:00:00">September 21, 2019</time>
+</div>
+
+<div class="meta__item-categories meta__item">
+	<svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg>
+	<span class="meta__text"><a class="meta__link" href="/categories/r" rel="category">R</a></span>
+</div>
+</div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/post/img/webscraping.png" alt="Web Scraping con R ">
+		</figure><div class="content post__content clearfix">
+			
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+
+
+<div id="obten-datos-de-una-pagina-web-dinamica" class="section level1">
+<h1>Obten datos de una pagina web dinámica</h1>
+<p>Una de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería <strong>Rvest</strong> nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas. Pero, ¿Qué pasa con las páginas que para mostrar sus datos ejecutan primero un código JavaScript?</p>
+<p>En este tutorial veremos como obtener datos desde este tipo de páginas combinando las bondades de Phantomjs y el ya mencionado Rvest. El ejemplo consiste en obtener los datos del <strong>Comité de Operación Económica del Sistema Interconectado Nacional (COES)</strong> y graficaremos el resultado.</p>
+<p>Instalar dependencias:</p>
+<ol style="list-style-type: decimal">
+<li>Instalar Rvest : <strong>install.packages(“rvest”)</strong></li>
+<li>Descargar Phantomjs : <a href="https://phantomjs.org/download.html" class="uri">https://phantomjs.org/download.html</a></li>
+</ol>
+<p>En el caso de Windows ubicar el instalador en el directorio donde se encuentra el programa. Necesitamos ejecutar el código JavaScript que contiene la página para renderizar los datos y lo hacemos con el siguiente código, lo llamaremos <strong>“scrape_page.js”</strong></p>
+<pre class="r"><code>var webPage = require(&#39;webpage&#39;);
+var page = webPage.create();
+var fs = require(&#39;fs&#39;);
+var path = &#39;coes.html&#39;
+page.open(&#39;https://www.coes.org.pe/Portal/portalinformacion/demanda&#39;, function (status) {
+  var content = page.content;
+  fs.write(path,content,&#39;w&#39;)
+  phantom.exit();
+});</code></pre>
+<p>En R escribimos el <strong>“script scrape_data.R”</strong> para ejecutar el JavaScript. y almacenar la información</p>
+<pre class="r"><code>library(rvest)
+library(tidyverse)
+library(stringi)
+
+#path to executable phantomjs
+#system(&quot;C:\..\\phantomjs.exe scrape_coes.js&quot;)
+
+paginawebca&lt;-read_html(&quot;../../coes.html&quot;)
+selectorca&lt;-&quot;#contentHolder &gt; table&quot;
+nodo_tabla&lt;-html_node(paginawebca,selectorca)
+nodo_tabla&lt;-html_table(nodo_tabla)</code></pre>
+<p>Tienes que posicionarte en el directorio donde se encuentra el ejecutable. Phamtonjs renderizará los datos de la página y lo escribe en un archivo html, después con rvest buscamos la tabla de nuestro interés lo convertimos a un dataframe</p>
+<pre class="r"><code>head(nodo_tabla)
+##              Fecha Ejecutado Prog. Diaria Prog. Semanal
+## 1 30/07/2019 00:30 5 171,125    5 412,223     5 372,910
+## 2 30/07/2019 01:00 5 131,558    5 256,043     5 372,910
+## 3 30/07/2019 01:30 5 050,866    5 237,495     5 219,945
+## 4 30/07/2019 02:00 4 996,233    5 099,967     5 219,945
+## 5 30/07/2019 02:30 4 897,622    5 094,941     5 211,298
+## 6 30/07/2019 03:00 4 949,614    5 070,431     5 211,298</code></pre>
+<p>Filtramos los datos que deseamos</p>
+<pre class="r"><code>#choosing data to graph
+data &lt;- nodo_tabla[1:48,]
+data$Fecha &lt;- str_replace_all(data$Fecha, &quot;/&quot;, &quot;-&quot;)
+data$Fecha &lt;- as.character(strptime(as.character(data$Fecha),&quot;%d-%m-%Y %H:%M&quot;))
+data[2:4] &lt;-data %&gt;% select(2:4)%&gt;%
+  mutate_all(str_replace_all,&quot; &quot;,&quot;&quot;)%&gt;%
+  mutate_all(str_replace_all,&quot;,&quot;,&quot;.&quot;)</code></pre>
+<p>Y el gráfico que obtenemos es</p>
+<pre class="r"><code>#ploting values 
+library(plotly)
+library(dplyr)
+data
+##                  Fecha Ejecutado Prog. Diaria Prog. Semanal
+## 1  2019-07-30 00:30:00  5171.125     5412.223      5372.910
+## 2  2019-07-30 01:00:00  5131.558     5256.043      5372.910
+## 3  2019-07-30 01:30:00  5050.866     5237.495      5219.945
+## 4  2019-07-30 02:00:00  4996.233     5099.967      5219.945
+## 5  2019-07-30 02:30:00  4897.622     5094.941      5211.298
+## 6  2019-07-30 03:00:00  4949.614     5070.431      5211.298
+## 7  2019-07-30 03:30:00  4830.169     5058.735      5202.040
+## 8  2019-07-30 04:00:00  4825.080     5083.264      5202.040
+## 9  2019-07-30 04:30:00  4932.949     5098.875      5365.559
+## 10 2019-07-30 05:00:00  4953.782     5251.484      5365.559
+## 11 2019-07-30 05:30:00  5063.902     5377.539      5625.841
+## 12 2019-07-30 06:00:00  5025.849     5525.590      5625.841
+## 13 2019-07-30 06:30:00  5196.998     5745.717      5933.711
+## 14 2019-07-30 07:00:00  5117.620     5799.556      5933.711
+## 15 2019-07-30 07:30:00  5364.775     5866.190      6047.454
+## 16 2019-07-30 08:00:00  5505.000     5932.243      6047.454
+## 17 2019-07-30 08:30:00  5748.746     6074.119      6276.776
+## 18 2019-07-30 09:00:00  5946.507     6138.137      6276.776
+## 19 2019-07-30 09:30:00  5941.072     6234.892      6406.733
+## 20 2019-07-30 10:00:00  6112.253     6285.548      6406.733
+## 21 2019-07-30 10:30:00  6105.237     6330.552      6474.079
+## 22 2019-07-30 11:00:00  6248.978     6357.223      6474.079
+## 23 2019-07-30 11:30:00  6312.788     6429.888      6499.242
+## 24 2019-07-30 12:00:00  6147.793     6386.451      6499.242
+## 25 2019-07-30 12:30:00  6211.268     6270.532      6333.487
+## 26 2019-07-30 13:00:00  6078.484     6211.876      6333.487
+## 27 2019-07-30 13:30:00  6118.536     6171.894      6333.721
+## 28 2019-07-30 14:00:00  6146.945     6208.780      6333.721
+## 29 2019-07-30 14:30:00  6190.304     6318.654      6407.358
+## 30 2019-07-30 15:00:00  6150.055     6321.185      6407.358
+## 31 2019-07-30 15:30:00  6212.135     6366.213      6481.258
+## 32 2019-07-30 16:00:00  6207.030     6365.853      6481.258
+## 33 2019-07-30 16:30:00  6191.354     6379.408      6439.994
+## 34 2019-07-30 17:00:00  6143.067     6359.852      6439.994
+## 35 2019-07-30 17:30:00  6137.656     6435.760      6455.992
+## 36 2019-07-30 18:00:00  6148.751     6318.624      6455.992
+## 37 2019-07-30 18:30:00  6415.571     6474.966      6659.958
+## 38 2019-07-30 19:00:00  6441.483     6533.066      6659.958
+## 39 2019-07-30 19:30:00  6472.319     6539.027      6566.380
+## 40 2019-07-30 20:00:00  6444.201     6492.980      6566.380
+## 41 2019-07-30 20:30:00  6439.870     6455.099      6503.203
+## 42 2019-07-30 21:00:00  6382.419     6409.723      6503.203
+## 43 2019-07-30 21:30:00  6427.667     6337.966      6370.275
+## 44 2019-07-30 22:00:00  6370.298     6226.828      6370.275
+## 45 2019-07-30 22:30:00  6209.205     6125.320      6003.108
+## 46 2019-07-30 23:00:00  5793.613     5863.827      6003.108
+## 47 2019-07-30 23:30:00  5687.209     5758.698      5694.093
+## 48 2019-07-31 00:00:00  5539.012     5600.558      5694.093
+dates1 &lt;- strptime(as.character(data$Fecha), &quot;%Y-%m-%d %H:%M:%S&quot;)
+data &lt;- data[,2:ncol(data)]  #tomamos la parte del dataframe con los valores
+data &lt;- data.frame(date=dates1,data)  #Añadimos las fechas
+
+data
+##                   date Ejecutado Prog..Diaria Prog..Semanal
+## 1  2019-07-30 00:30:00  5171.125     5412.223      5372.910
+## 2  2019-07-30 01:00:00  5131.558     5256.043      5372.910
+## 3  2019-07-30 01:30:00  5050.866     5237.495      5219.945
+## 4  2019-07-30 02:00:00  4996.233     5099.967      5219.945
+## 5  2019-07-30 02:30:00  4897.622     5094.941      5211.298
+## 6  2019-07-30 03:00:00  4949.614     5070.431      5211.298
+## 7  2019-07-30 03:30:00  4830.169     5058.735      5202.040
+## 8  2019-07-30 04:00:00  4825.080     5083.264      5202.040
+## 9  2019-07-30 04:30:00  4932.949     5098.875      5365.559
+## 10 2019-07-30 05:00:00  4953.782     5251.484      5365.559
+## 11 2019-07-30 05:30:00  5063.902     5377.539      5625.841
+## 12 2019-07-30 06:00:00  5025.849     5525.590      5625.841
+## 13 2019-07-30 06:30:00  5196.998     5745.717      5933.711
+## 14 2019-07-30 07:00:00  5117.620     5799.556      5933.711
+## 15 2019-07-30 07:30:00  5364.775     5866.190      6047.454
+## 16 2019-07-30 08:00:00  5505.000     5932.243      6047.454
+## 17 2019-07-30 08:30:00  5748.746     6074.119      6276.776
+## 18 2019-07-30 09:00:00  5946.507     6138.137      6276.776
+## 19 2019-07-30 09:30:00  5941.072     6234.892      6406.733
+## 20 2019-07-30 10:00:00  6112.253     6285.548      6406.733
+## 21 2019-07-30 10:30:00  6105.237     6330.552      6474.079
+## 22 2019-07-30 11:00:00  6248.978     6357.223      6474.079
+## 23 2019-07-30 11:30:00  6312.788     6429.888      6499.242
+## 24 2019-07-30 12:00:00  6147.793     6386.451      6499.242
+## 25 2019-07-30 12:30:00  6211.268     6270.532      6333.487
+## 26 2019-07-30 13:00:00  6078.484     6211.876      6333.487
+## 27 2019-07-30 13:30:00  6118.536     6171.894      6333.721
+## 28 2019-07-30 14:00:00  6146.945     6208.780      6333.721
+## 29 2019-07-30 14:30:00  6190.304     6318.654      6407.358
+## 30 2019-07-30 15:00:00  6150.055     6321.185      6407.358
+## 31 2019-07-30 15:30:00  6212.135     6366.213      6481.258
+## 32 2019-07-30 16:00:00  6207.030     6365.853      6481.258
+## 33 2019-07-30 16:30:00  6191.354     6379.408      6439.994
+## 34 2019-07-30 17:00:00  6143.067     6359.852      6439.994
+## 35 2019-07-30 17:30:00  6137.656     6435.760      6455.992
+## 36 2019-07-30 18:00:00  6148.751     6318.624      6455.992
+## 37 2019-07-30 18:30:00  6415.571     6474.966      6659.958
+## 38 2019-07-30 19:00:00  6441.483     6533.066      6659.958
+## 39 2019-07-30 19:30:00  6472.319     6539.027      6566.380
+## 40 2019-07-30 20:00:00  6444.201     6492.980      6566.380
+## 41 2019-07-30 20:30:00  6439.870     6455.099      6503.203
+## 42 2019-07-30 21:00:00  6382.419     6409.723      6503.203
+## 43 2019-07-30 21:30:00  6427.667     6337.966      6370.275
+## 44 2019-07-30 22:00:00  6370.298     6226.828      6370.275
+## 45 2019-07-30 22:30:00  6209.205     6125.320      6003.108
+## 46 2019-07-30 23:00:00  5793.613     5863.827      6003.108
+## 47 2019-07-30 23:30:00  5687.209     5758.698      5694.093
+## 48 2019-07-31 00:00:00  5539.012     5600.558      5694.093
+plot_ly(data,x = ~date)%&gt;%
+  add_lines(y=data$Ejecutado, name=colnames(data)[2])%&gt;%
+  add_lines(y=data$Prog..Diaria,name=colnames(data)[3])%&gt;%
+  add_lines(y=data$Prog..Semanal,name=colnames(data)[4])</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"4df83f4d5c5e":["function () ","plotlyVisDat"]},"cur_data":"4df83f4d5c5e","attrs":{"4df83f4d5c5e":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"y":["5171.125","5131.558","5050.866","4996.233","4897.622","4949.614","4830.169","4825.080","4932.949","4953.782","5063.902","5025.849","5196.998","5117.620","5364.775","5505.000","5748.746","5946.507","5941.072","6112.253","6105.237","6248.978","6312.788","6147.793","6211.268","6078.484","6118.536","6146.945","6190.304","6150.055","6212.135","6207.030","6191.354","6143.067","6137.656","6148.751","6415.571","6441.483","6472.319","6444.201","6439.870","6382.419","6427.667","6370.298","6209.205","5793.613","5687.209","5539.012"],"type":"scatter","mode":"lines","name":"Ejecutado","inherit":true},"4df83f4d5c5e.1":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"y":["5412.223","5256.043","5237.495","5099.967","5094.941","5070.431","5058.735","5083.264","5098.875","5251.484","5377.539","5525.590","5745.717","5799.556","5866.190","5932.243","6074.119","6138.137","6234.892","6285.548","6330.552","6357.223","6429.888","6386.451","6270.532","6211.876","6171.894","6208.780","6318.654","6321.185","6366.213","6365.853","6379.408","6359.852","6435.760","6318.624","6474.966","6533.066","6539.027","6492.980","6455.099","6409.723","6337.966","6226.828","6125.320","5863.827","5758.698","5600.558"],"type":"scatter","mode":"lines","name":"Prog..Diaria","inherit":true},"4df83f4d5c5e.2":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"y":["5372.910","5372.910","5219.945","5219.945","5211.298","5211.298","5202.040","5202.040","5365.559","5365.559","5625.841","5625.841","5933.711","5933.711","6047.454","6047.454","6276.776","6276.776","6406.733","6406.733","6474.079","6474.079","6499.242","6499.242","6333.487","6333.487","6333.721","6333.721","6407.358","6407.358","6481.258","6481.258","6439.994","6439.994","6455.992","6455.992","6659.958","6659.958","6566.380","6566.380","6503.203","6503.203","6370.275","6370.275","6003.108","6003.108","5694.093","5694.093"],"type":"scatter","mode":"lines","name":"Prog..Semanal","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"date"},"yaxis":{"domain":[0,1],"automargin":true,"title":[],"type":"category","categoryorder":"array","categoryarray":["4825.080","4830.169","4897.622","4932.949","4949.614","4953.782","4996.233","5025.849","5050.866","5058.735","5063.902","5070.431","5083.264","5094.941","5098.875","5099.967","5117.620","5131.558","5171.125","5196.998","5202.040","5211.298","5219.945","5237.495","5251.484","5256.043","5364.775","5365.559","5372.910","5377.539","5412.223","5505.000","5525.590","5539.012","5600.558","5625.841","5687.209","5694.093","5745.717","5748.746","5758.698","5793.613","5799.556","5863.827","5866.190","5932.243","5933.711","5941.072","5946.507","6003.108","6047.454","6074.119","6078.484","6105.237","6112.253","6118.536","6125.320","6137.656","6138.137","6143.067","6146.945","6147.793","6148.751","6150.055","6171.894","6190.304","6191.354","6207.030","6208.780","6209.205","6211.268","6211.876","6212.135","6226.828","6234.892","6248.978","6270.532","6276.776","6285.548","6312.788","6318.624","6318.654","6321.185","6330.552","6333.487","6333.721","6337.966","6357.223","6359.852","6365.853","6366.213","6370.275","6370.298","6379.408","6382.419","6386.451","6406.733","6407.358","6409.723","6415.571","6427.667","6429.888","6435.760","6439.870","6439.994","6441.483","6444.201","6455.099","6455.992","6472.319","6474.079","6474.966","6481.258","6492.980","6499.242","6503.203","6533.066","6539.027","6566.380","6659.958"]},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":["2019-07-30 00:30:00","2019-07-30 01:00:00","2019-07-30 01:30:00","2019-07-30 02:00:00","2019-07-30 02:30:00","2019-07-30 03:00:00","2019-07-30 03:30:00","2019-07-30 04:00:00","2019-07-30 04:30:00","2019-07-30 05:00:00","2019-07-30 05:30:00","2019-07-30 06:00:00","2019-07-30 06:30:00","2019-07-30 07:00:00","2019-07-30 07:30:00","2019-07-30 08:00:00","2019-07-30 08:30:00","2019-07-30 09:00:00","2019-07-30 09:30:00","2019-07-30 10:00:00","2019-07-30 10:30:00","2019-07-30 11:00:00","2019-07-30 11:30:00","2019-07-30 12:00:00","2019-07-30 12:30:00","2019-07-30 13:00:00","2019-07-30 13:30:00","2019-07-30 14:00:00","2019-07-30 14:30:00","2019-07-30 15:00:00","2019-07-30 15:30:00","2019-07-30 16:00:00","2019-07-30 16:30:00","2019-07-30 17:00:00","2019-07-30 17:30:00","2019-07-30 18:00:00","2019-07-30 18:30:00","2019-07-30 19:00:00","2019-07-30 19:30:00","2019-07-30 20:00:00","2019-07-30 20:30:00","2019-07-30 21:00:00","2019-07-30 21:30:00","2019-07-30 22:00:00","2019-07-30 22:30:00","2019-07-30 23:00:00","2019-07-30 23:30:00","2019-07-31 00:00:00"],"y":["5171.125","5131.558","5050.866","4996.233","4897.622","4949.614","4830.169","4825.080","4932.949","4953.782","5063.902","5025.849","5196.998","5117.620","5364.775","5505.000","5748.746","5946.507","5941.072","6112.253","6105.237","6248.978","6312.788","6147.793","6211.268","6078.484","6118.536","6146.945","6190.304","6150.055","6212.135","6207.030","6191.354","6143.067","6137.656","6148.751","6415.571","6441.483","6472.319","6444.201","6439.870","6382.419","6427.667","6370.298","6209.205","5793.613","5687.209","5539.012"],"type":"scatter","mode":"lines","name":"Ejecutado","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2019-07-30 00:30:00","2019-07-30 01:00:00","2019-07-30 01:30:00","2019-07-30 02:00:00","2019-07-30 02:30:00","2019-07-30 03:00:00","2019-07-30 03:30:00","2019-07-30 04:00:00","2019-07-30 04:30:00","2019-07-30 05:00:00","2019-07-30 05:30:00","2019-07-30 06:00:00","2019-07-30 06:30:00","2019-07-30 07:00:00","2019-07-30 07:30:00","2019-07-30 08:00:00","2019-07-30 08:30:00","2019-07-30 09:00:00","2019-07-30 09:30:00","2019-07-30 10:00:00","2019-07-30 10:30:00","2019-07-30 11:00:00","2019-07-30 11:30:00","2019-07-30 12:00:00","2019-07-30 12:30:00","2019-07-30 13:00:00","2019-07-30 13:30:00","2019-07-30 14:00:00","2019-07-30 14:30:00","2019-07-30 15:00:00","2019-07-30 15:30:00","2019-07-30 16:00:00","2019-07-30 16:30:00","2019-07-30 17:00:00","2019-07-30 17:30:00","2019-07-30 18:00:00","2019-07-30 18:30:00","2019-07-30 19:00:00","2019-07-30 19:30:00","2019-07-30 20:00:00","2019-07-30 20:30:00","2019-07-30 21:00:00","2019-07-30 21:30:00","2019-07-30 22:00:00","2019-07-30 22:30:00","2019-07-30 23:00:00","2019-07-30 23:30:00","2019-07-31 00:00:00"],"y":["5412.223","5256.043","5237.495","5099.967","5094.941","5070.431","5058.735","5083.264","5098.875","5251.484","5377.539","5525.590","5745.717","5799.556","5866.190","5932.243","6074.119","6138.137","6234.892","6285.548","6330.552","6357.223","6429.888","6386.451","6270.532","6211.876","6171.894","6208.780","6318.654","6321.185","6366.213","6365.853","6379.408","6359.852","6435.760","6318.624","6474.966","6533.066","6539.027","6492.980","6455.099","6409.723","6337.966","6226.828","6125.320","5863.827","5758.698","5600.558"],"type":"scatter","mode":"lines","name":"Prog..Diaria","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2019-07-30 00:30:00","2019-07-30 01:00:00","2019-07-30 01:30:00","2019-07-30 02:00:00","2019-07-30 02:30:00","2019-07-30 03:00:00","2019-07-30 03:30:00","2019-07-30 04:00:00","2019-07-30 04:30:00","2019-07-30 05:00:00","2019-07-30 05:30:00","2019-07-30 06:00:00","2019-07-30 06:30:00","2019-07-30 07:00:00","2019-07-30 07:30:00","2019-07-30 08:00:00","2019-07-30 08:30:00","2019-07-30 09:00:00","2019-07-30 09:30:00","2019-07-30 10:00:00","2019-07-30 10:30:00","2019-07-30 11:00:00","2019-07-30 11:30:00","2019-07-30 12:00:00","2019-07-30 12:30:00","2019-07-30 13:00:00","2019-07-30 13:30:00","2019-07-30 14:00:00","2019-07-30 14:30:00","2019-07-30 15:00:00","2019-07-30 15:30:00","2019-07-30 16:00:00","2019-07-30 16:30:00","2019-07-30 17:00:00","2019-07-30 17:30:00","2019-07-30 18:00:00","2019-07-30 18:30:00","2019-07-30 19:00:00","2019-07-30 19:30:00","2019-07-30 20:00:00","2019-07-30 20:30:00","2019-07-30 21:00:00","2019-07-30 21:30:00","2019-07-30 22:00:00","2019-07-30 22:30:00","2019-07-30 23:00:00","2019-07-30 23:30:00","2019-07-31 00:00:00"],"y":["5372.910","5372.910","5219.945","5219.945","5211.298","5211.298","5202.040","5202.040","5365.559","5365.559","5625.841","5625.841","5933.711","5933.711","6047.454","6047.454","6276.776","6276.776","6406.733","6406.733","6474.079","6474.079","6499.242","6499.242","6333.487","6333.487","6333.721","6333.721","6407.358","6407.358","6481.258","6481.258","6439.994","6439.994","6455.992","6455.992","6659.958","6659.958","6566.380","6566.380","6503.203","6503.203","6370.275","6370.275","6003.108","6003.108","5694.093","5694.093"],"type":"scatter","mode":"lines","name":"Prog..Semanal","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Ppppuedes descargar el código fuente <a href="https://www.google.com">aqui</a>. No olvides descargar y posicionar el ejecutable de phantomjs.</p>
+</div>
+
+		</div>
+		<footer class="post__footer">
+			
+<div class="post__tags tags clearfix">
+	<svg class="tags__badge icon icon-tag" width="16" height="16" viewBox="0 0 32 32"><path d="M32 19c0 1-1 2-1 2L21 31s-1 1-2 1-2-1-2-1L2 16c-1-1-1.4-2-1.4-2S0 12.5 0 11V3C0 1.5.8.8.8.8S1.5 0 3 0h8c1.5 0 3 .6 3 .6S15 1 16 2l15 15s1 1 1 2zM7 10a3 3 0 1 0 0-6 3 3 0 0 0 0 6z"/></svg>
+	<ul class="tags__list">
+		<li class="tags__item"><a class="tags__link btn" href="/tags/scraping/" rel="tag">scraping</a></li>
+		<li class="tags__item"><a class="tags__link btn" href="/tags/plotly/" rel="tag">plotly</a></li>
+		<li class="tags__item"><a class="tags__link btn" href="/tags/javascript/" rel="tag">javascript</a></li>
+	</ul>
+</div>
+		</footer>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Eddy René avatar" src="/img/eddy.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">Sobre el autor Eddy René</span>
+	</div>
+	<div class="authorbox__description">
+		  Passionate about machine learning and data science with deep knowledge in Python and R
+	</div>
+</div>
+
+<nav class="post-nav flex">
+	<div class="post-nav__item post-nav__item--prev">
+		<a class="post-nav__link" href="/post/los-mejores-a%C3%B1os-de-tu-vida/" rel="prev"><span class="post-nav__caption">«&thinsp;Anterior</span><p class="post-nav__post-title">Los mejores años de tu vida</p></a>
+	</div>
+</nav>
+
+<section class="comments">
+	<div id="disqus_thread"></div>
+<script type="application/javascript">
+    var disqus_config = function () {
+    
+    
+    
+    };
+    (function() {
+        if (["localhost", "127.0.0.1"].indexOf(window.location.hostname) != -1) {
+            document.getElementById('disqus_thread').innerHTML = 'Disqus comments not available by default when the website is previewed locally.';
+            return;
+        }
+        var d = document, s = d.createElement('script'); s.async = true;
+        s.src = '//' + "Eddyrene" + '.disqus.com/embed.js';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
+    })();
+</script>
+<noscript>Please enable JavaScript to view the <a href="https://disqus.com/?ref_noscript">comments powered by Disqus.</a></noscript>
+<a href="https://disqus.com" class="dsq-brlink">comments powered by <span class="logo-disqus">Disqus</span></a>
+</section>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="Buscar..." value="" name="q" aria-label="Buscar...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Más Recientes</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/web-scraping-in-r/">Web Scraping con R </a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/los-mejores-a%C3%B1os-de-tu-vida/">Los mejores años de tu vida</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/pasando-el-tiempo-en-libros/">Pasando el tiempo en libros</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/bienvenido/">Bienvenido</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categorías</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/categories/carrera-personal">Carrera personal</a></li>
+			<li class="widget__item"><a class="widget__link" href="/categories/r">R</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Etiquetas</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/javascript" title="Javascript">Javascript (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/metas" title="Metas">Metas (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/plotly" title="Plotly">Plotly (1)</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/scraping" title="Scraping">Scraping (1)</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="LinkedIn" rel="noopener noreferrer" href="https://linkedin.com/in/eddyrenec" target="_blank">
+				<svg class="widget-social__link-icon icon icon-linkedin" width="24" height="24" viewBox="0 0 352 352"><path d="M0,40v272c0,21.9,18.1,40,40,40h272c21.9,0,40-18.1,40-40V40c0-21.9-18.1-40-40-40H40C18.1,0,0,18.1,0,40z M312,32 c4.6,0,8,3.4,8,8v272c0,4.6-3.4,8-8,8H40c-4.6,0-8-3.4-8-8V40c0-4.6,3.4-8,8-8H312z M59.5,87c0,15.2,12.3,27.5,27.5,27.5 c15.2,0,27.5-12.3,27.5-27.5c0-15.2-12.3-27.5-27.5-27.5C71.8,59.5,59.5,71.8,59.5,87z M187,157h-1v-21h-45v152h47v-75 c0-19.8,3.9-39,28.5-39c24.2,0,24.5,22.4,24.5,40v74h47v-83.5c0-40.9-8.7-72-56.5-72C208.5,132.5,193.3,145.1,187,157z M64,288h47.5 V136H64V288z"/></svg>
+				<span>LinkedIn</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/eddyrene" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:eddy.rene.c@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>eddy.rene.c@gmail.com</span>
+			</a>
+		</div>
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2019 Eddy Rene.
+			<span class="footer__copyright-credits">Generado con <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> y <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a>.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

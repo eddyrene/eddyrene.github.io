@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>metas on Eddy Rene</title>
+    <link>/tags/metas/</link>
+    <description>Recent content in metas on Eddy Rene</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es</language>
+    <lastBuildDate>Fri, 05 Apr 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/metas/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Los mejores años de tu vida</title>
+      <link>/post/los-mejores-a%C3%B1os-de-tu-vida/</link>
+      <pubDate>Fri, 05 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/los-mejores-a%C3%B1os-de-tu-vida/</guid>
+      <description>Hola a todos!
+Quisiera contarles algo que aprendí en estos últimos meses, pero para empezar necesitamos ponernos en contexto.
+Después de haber terminado el intercambio regresé a mi ciudad Arequipa en Perú, empecé la búsqueda de empleo ya que había estado viviendo medio año con el dinero de mis padres y algunos premios de Udocz (Si te interesa saber cómo gané con Udocz visita aqui, afortunadamente después de una semana conseguí empleo y hasta el 31 de diciembre pasado, no tuve descanso y trabajé en total en dos empresas locales desarrollando adaptaciones ERP en Odoo.</description>
+    </item>
+    
+  </channel>
+</rss>

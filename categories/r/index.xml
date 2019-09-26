@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>R on Eddy Rene</title>
+    <link>/categories/r/</link>
+    <description>Recent content in R on Eddy Rene</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es</language>
+    <lastBuildDate>Sat, 21 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/categories/r/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Web Scraping con R </title>
+      <link>/post/web-scraping-in-r/</link>
+      <pubDate>Sat, 21 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/web-scraping-in-r/</guid>
+      <description>Obten datos de una pagina web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas.</description>
+    </item>
+    
+  </channel>
+</rss>

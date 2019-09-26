@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Eddy Rene</title>
+    <link>/</link>
+    <description>Recent content on Eddy Rene</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es</language>
+    <lastBuildDate>Sat, 21 Sep 2019 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Web Scraping con R </title>
+      <link>/post/web-scraping-in-r/</link>
+      <pubDate>Sat, 21 Sep 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/web-scraping-in-r/</guid>
+      <description>Obten datos de una pagina web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas.</description>
+    </item>
+    
+    <item>
+      <title>Sobre Eddy</title>
+      <link>/about/</link>
+      <pubDate>Tue, 09 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/about/</guid>
+      <description>Mi nombre es Eddy René Cáceres Huacarpuma, apasionado del Machine Learning y Data Science. Creé este sitio en Marzo del 2018 cuando realizaba un intercambio académico en UNICENTRO en Brasil.
+Egresé de la escuela de Ciencia de la Computación de la UNSA en Arequipa-Perú. He trabajado con el ERP Odoo, levantando proyectos desde cero.
+Actualmente desarrollo herramientas de análisis de datos para el descubrimiento de insights. Puedes saber más de mi en Curriculum</description>
+    </item>
+    
+    <item>
+      <title>Los mejores años de tu vida</title>
+      <link>/post/los-mejores-a%C3%B1os-de-tu-vida/</link>
+      <pubDate>Fri, 05 Apr 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/los-mejores-a%C3%B1os-de-tu-vida/</guid>
+      <description>Hola a todos!
+Quisiera contarles algo que aprendí en estos últimos meses, pero para empezar necesitamos ponernos en contexto.
+Después de haber terminado el intercambio regresé a mi ciudad Arequipa en Perú, empecé la búsqueda de empleo ya que había estado viviendo medio año con el dinero de mis padres y algunos premios de Udocz (Si te interesa saber cómo gané con Udocz visita aqui, afortunadamente después de una semana conseguí empleo y hasta el 31 de diciembre pasado, no tuve descanso y trabajé en total en dos empresas locales desarrollando adaptaciones ERP en Odoo.</description>
+    </item>
+    
+    <item>
+      <title>Pasando el tiempo en libros</title>
+      <link>/post/pasando-el-tiempo-en-libros/</link>
+      <pubDate>Tue, 26 Mar 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/pasando-el-tiempo-en-libros/</guid>
+      <description>Esta es la segunda entrada al blog del año, y ya hace tiempo que queria escribir sobre esto, pero la verdad es que no me daba el tiempo para hacerlo, hasta que hoy finalmente me decidí y quiero contarles algo que es mi meta personal para este 2019. A mediados del 2018, descrubri el sitio de Goodreads y quedé fascinado (puedes revisar mi compromiso y conocerme un poco más aquí ) me puse una meta de 10 libros para terminar ese año.</description>
+    </item>
+    
+    <item>
+      <title>Bienvenido</title>
+      <link>/post/bienvenido/</link>
+      <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
+      
+      <guid>/post/bienvenido/</guid>
+      <description>Hola!
+Me siento muy entusiasmado por este proyecto de blog que oficialmente arranca hoy, y bueno en este espacio llamado Carrera Personal, compartiré todas esas ideas que desde mi punto de vista, pueden ayudar a cualquier persona a mejorar su vida, haciéndola más interesante y productiva.
+Anteriormente he estado escribiendo en NoCreasNada, (puedes echar un vistaso aquí) y sinceramente me ha gustado el tiempo que he pasado ahí, pero ahora tomé el valor para empezar mi propio blog.</description>
+    </item>
+    
+  </channel>
+</rss>

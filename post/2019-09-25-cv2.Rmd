@@ -1,0 +1,38 @@
+---
+title: CV
+author: Eddy Caceres
+name: Mitchell O'Hara-Wild
+date: "`r format(Sys.time(), '%B, %Y')`"
+qualifications: BCom(Hons), BSc
+address: Melbourne, Australia
+profilepic: pic.jpg
+email: mail@mitchelloharawild.com
+website: mitchelloharawild.com
+github: mitchelloharawild
+linkedin: mitchelloharawild
+twitter: mitchoharawild
+headcolor: 414141
+output: vitae::awesomecv
+
+---
+
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
+library(vitae)
+```
+
+# Professional Summary
+
+This is a good opportunity to introduce yourself professionally and summarise
+why your skills are well suited to the job you are applying for!
+
+library(vitae)
+edu <- rorcid::orcid_educations("0000-0001-6729-7695")
+edu$`0000-0001-6729-7695`$`education-summary` %>%
+  detailed_entries(
+    what = `role-title`,
+    when = glue::glue("{`start-date.year.value`} - {`end-date.year.value`}"),
+    with = organization.name,
+    where = organization.address.city
+  )
