@@ -15,7 +15,7 @@ thumbnail: img/piwebapi.png
 
 Si trabajas en una industria que utiliza la suite Pi System de Osisoft para historizar los datos este tutorial es para ti, si no igual leelo, aprederás algo. 
 
-Quizas tienes ganas de ir mas allá de analisis con excel, utilizando datos con el datalink, y te haz preguntando como puedes trabajar de una manera más eficiente, utilizar mas datos y poder ver lo que pasa en tu proceso, entonces empecemos.
+Quizas tienes ganas de ir mas allá de analisis con excel, utilizando datos con el datalink, y te haz preguntado como puedes trabajar de una manera más eficiente, utilizar mas datos y poder ver lo que pasa en tu proceso.
 
 Este tutorial sigue los pasos explicados en este [post](https://github.com/rbechalany/PI-Web-API-Client-R), para mayor puedes consultar el artículo completo.
 
@@ -49,7 +49,7 @@ Con esto funcionando podemos empezar.
 
 # Conexión
 
-Previamente deberás de asegurarte que tipo autenticación está definida en los servidores Pi para la conexión con Pi Web APi (bastaria con probar las dos opciones [aqui](https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe) mostradas). Encontré un servicio con **autenticación basic** que usaremos y con el que podremos hacer algunos experimentos.
+Previamente deberás de asegurarte que tipo autenticación está definida en los servidores Pi para la conexión con Pi Web APi (bastaría con probar las dos opciones [aqui](https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe) mostradas). Encontré un servicio con **autenticación basic** que usaremos y con el que podremos hacer algunos experimentos.
 
 
 ```{r message=FALSE, warning=FALSE}
@@ -74,9 +74,9 @@ response1
 Los valores obtenidos vienen a ser los mismos si ingresamos directamente a https://devdata.osisoft.com/piwebapi y utilizamos las credenciales mostradas líneas arriba. 
 
 
-# consulta de datos
+# Consulta de datos
 
-Los métodos principales de recuperación de datos son "Recorded" para datos compresos e "Interpolated" valores y podemos elejir entre consultar uno o varios al mismo tiempo
+Los métodos principales de recuperación de datos son *Recorded* para datos compresos e *Interpolated* valores y podemos elejir entre consultar uno o varios al mismo tiempo
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -87,7 +87,7 @@ data <- piWebApiService$data$getRecordedValues(path = "pi:\\\\PISRV1\\BA:TEMP.1"
 head(data)
 ```
 
-Para consultar datos interpolados y mantenernos solo con los valores podemos usar 
+Para consultar datos interpolados y quedarnos solo con los valores podemos usar
 
 ```{r message=FALSE, warning=FALSE}
 library("dplyr")
@@ -104,9 +104,9 @@ data2 <- piWebApiService$data$getMultipleInterpolatedValues(paths = paths, start
 head(data2)
 ```
 
-# EDA (Exploratory Data Analisis)
+# EDA (*Exploratory Data Analysis*)
 
-Una vez recuperada la data podemos visualizarla y hacer una exploración preliminar, como ver la tendencia de alguna señar en particular 
+Una vez recuperada la data podemos visualizarla y hacer una exploración preliminar, como ver la tendencia de alguna señal en particular 
 
 ```{r message=FALSE, warning=FALSE}
 
@@ -138,7 +138,7 @@ data2 %>%
 
 ```
 
-Una de mis favoritas herramientas es usar plotly para ver las tendencias 
+Una de mis herramientas favoritas es **plotly** para ver las tendencias 
 
 ```{r message=FALSE, warning=FALSE}
 library("plotly")
