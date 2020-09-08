@@ -10,7 +10,7 @@ tags:
   - Osisoft
   - R
 description: ''
-thumbnail: img/R_Pi.png 
+thumbnail: img/R_Pi.png
 ---
 
 Si trabajas en una industria que utiliza la suite Pi System de Osisoft para historizar los datos este tutorial es para ti, si no igual leelo, aprederás algo. 
