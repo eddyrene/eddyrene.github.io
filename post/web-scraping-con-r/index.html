@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<title>Web Scraping con R  - EddyRene</title>
+	<script>(function(d,e){d[e]=d[e].replace("no-js","js");})(document.documentElement,"className");</script>
+	<meta name="description" content="">
+		<meta property="og:title" content="Web Scraping con R " />
+<meta property="og:description" content="Obtén datos de una página web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas." />
+<meta property="og:type" content="article" />
+<meta property="og:url" content="/post/web-scraping-con-r/" />
+<meta property="article:published_time" content="2019-09-21T00:00:00+00:00" />
+<meta property="article:modified_time" content="2019-09-21T00:00:00+00:00" />
+
+	<link rel="dns-prefetch" href="//fonts.googleapis.com">
+	<link rel="dns-prefetch" href="//fonts.gstatic.com">
+	<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,400i,700">
+	<link rel="stylesheet" href="/css/style.css">
+	
+	<link rel="shortcut icon" href="/favicon.ico">
+		
+</head>
+<body class="body">
+	<div class="container container--outer">
+		<header class="header">
+	<div class="container header__container">
+		
+	<div class="logo">
+		<a class="logo__link" href="/" title="EddyRene" rel="home">
+			<div class="logo__item logo__text">
+					<div class="logo__title">EddyRene</div>
+					<div class="logo__tagline">Ciencia de datos para mineria</div>
+				</div>
+		</a>
+	</div>
+		
+<nav class="menu">
+	<button class="menu__btn" aria-haspopup="true" aria-expanded="false" tabindex="0">
+		<span class="menu__btn-title" tabindex="-1">Menu</span>
+	</button>
+	<ul class="menu__list">
+		<li class="menu__item">
+			<a class="menu__link" href="/about/">
+				
+				<span class="menu__text">About Eddy</span>
+				
+			</a>
+		</li>
+	</ul>
+</nav>
+
+	</div>
+</header>
+		<div class="wrapper flex">
+			<div class="primary">
+			
+<main class="main" role="main">
+	<article class="post">
+		<header class="post__header">
+			<h1 class="post__title">Web Scraping con R </h1>
+			<div class="post__meta meta">
+<div class="meta__item-datetime meta__item">
+	<svg class="meta__icon icon icon-time" width="16" height="14" viewBox="0 0 30 28"><path d="M15 0C7 0 1 6 1 14s6 14 14 14 14-6 14-14S23 0 15 0zm0 25C9 25 4 20 4 14S9 3 15 3s11 5 11 11-5 11-11 11zm1-18h-2v8.4l6.8 4.4L22 18l-6-3.8V7z"/></svg><time class="meta__text" datetime="2019-09-21T00:00:00Z">September 21, 2019</time></div><div class="meta__item-categories meta__item"><svg class="meta__icon icon icon-category" width="16" height="16" viewBox="0 0 16 16"><path d="m7 2l1 2h8v11h-16v-13z"/></svg><span class="meta__text"><a class="meta__link" href="/categories/r/" rel="category">R</a>
+	</span>
+</div></div>
+		</header>
+		<figure class="post__thumbnail">
+			<img src="/img/webscraping.png" alt="Web Scraping con R ">
+		</figure><div class="content post__content clearfix">
+			
+<script src="/rmarkdown-libs/htmlwidgets/htmlwidgets.js"></script>
+<script src="/rmarkdown-libs/plotly-binding/plotly.js"></script>
+<script src="/rmarkdown-libs/typedarray/typedarray.min.js"></script>
+<script src="/rmarkdown-libs/jquery/jquery.min.js"></script>
+<link href="/rmarkdown-libs/crosstalk/css/crosstalk.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/crosstalk/js/crosstalk.min.js"></script>
+<link href="/rmarkdown-libs/plotly-htmlwidgets-css/plotly-htmlwidgets.css" rel="stylesheet" />
+<script src="/rmarkdown-libs/plotly-main/plotly-latest.min.js"></script>
+
+
+<div id="obtén-datos-de-una-página-web-dinámica" class="section level1">
+<h1>Obtén datos de una página web dinámica</h1>
+<p>Una de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas. Pero, ¿Qué pasa con las páginas que para mostrar sus datos ejecutan primero un código JavaScript?</p>
+<p>En este tutorial veremos como obtener datos desde este tipo de páginas combinando las bondades de Phantomjs y el ya mencionado Rvest. El ejemplo consiste en obtener los datos del <strong>Comité de Operación Económica del Sistema Interconectado Nacional (COES)</strong> y graficaremos el resultado.</p>
+<p>Instalar dependencias:</p>
+<ol style="list-style-type: decimal">
+<li>Instalar Rvest : install.packages(“rvest”)</li>
+<li>Descargar Phantomjs : <a href="https://phantomjs.org/download.html">link</a></li>
+</ol>
+<p>En el caso de Windows ubicar el instalador en el directorio donde se encuentra el programa. Necesitamos ejecutar el código JavaScript que contiene la página para renderizar los datos y lo hacemos con el siguiente código, lo llamaremos <strong>“scrape_page.js”</strong></p>
+<pre class="r"><code>var webPage = require(&#39;webpage&#39;);
+var page = webPage.create();
+var fs = require(&#39;fs&#39;);
+var path = &#39;coes.html&#39;
+page.open(&#39;https://www.coes.org.pe/Portal/portalinformacion/demanda&#39;, function (status) {
+  var content = page.content;
+  fs.write(path,content,&#39;w&#39;)
+  phantom.exit();
+});</code></pre>
+<p>En R escribimos el <strong>“script scrape_data.R”</strong> para ejecutar el JavaScript. y almacenar la información</p>
+<pre class="r"><code>library(rvest)
+library(tidyverse)
+library(stringi)
+
+#path to executable phantomjs
+#system(&quot;C:\..\\phantomjs.exe scrape_coes.js&quot;)
+
+paginawebca&lt;-read_html(&quot;../../coes.html&quot;)
+selectorca&lt;-&quot;#contentHolder &gt; table&quot;
+nodo_tabla&lt;-html_node(paginawebca,selectorca)
+nodo_tabla&lt;-html_table(nodo_tabla)</code></pre>
+<p>Tienes que posicionarte en el directorio donde se encuentra el ejecutable. Phamtonjs renderizará los datos de la página y lo escribe en un archivo html, después con rvest buscamos la tabla de nuestro interés lo convertimos a un dataframe.</p>
+<pre class="r"><code>head(nodo_tabla)</code></pre>
+<pre><code>##              Fecha Ejecutado Prog. Diaria Prog. Semanal
+## 1 17/09/2019 00:30 5 707,899    5 756,119     5 623,266
+## 2 17/09/2019 01:00 5 581,516    5 620,449     5 623,266
+## 3 17/09/2019 01:30 5 502,963    5 553,468     5 476,561
+## 4 17/09/2019 02:00 5 446,029    5 505,737     5 476,561
+## 5 17/09/2019 02:30 5 431,983    5 458,534     5 394,244
+## 6 17/09/2019 03:00 5 336,157    5 453,442     5 394,244</code></pre>
+<p>Filtramos los datos que deseamos</p>
+<pre class="r"><code>data &lt;- nodo_tabla[1:48,]
+data$Fecha &lt;- str_replace_all(data$Fecha, &quot;/&quot;, &quot;-&quot;)
+data$Fecha &lt;- as.character(strptime(as.character(data$Fecha),&quot;%d-%m-%Y %H:%M&quot;))
+data[2:4] &lt;-data %&gt;% select(2:4)%&gt;%
+  mutate_all(str_replace_all,&quot; &quot;,&quot;&quot;)%&gt;%
+  mutate_all(str_replace_all,&quot;,&quot;,&quot;.&quot;)</code></pre>
+<p>Y el gráfico que obtenemos es</p>
+<pre class="r"><code>library(plotly)
+library(dplyr)
+
+dates1 &lt;- strptime(as.character(data$Fecha), &quot;%Y-%m-%d %H:%M:%S&quot;)
+data &lt;- data[,2:ncol(data)]  #tomamos la parte del dataframe con los valores
+data &lt;- data.frame(date=dates1,data)  #Añadimos las fechas
+
+plot_ly(data,x = ~date)%&gt;%
+  add_lines(y=data$Ejecutado, name=colnames(data)[2])%&gt;%
+  add_lines(y=data$Prog..Diaria,name=colnames(data)[3])%&gt;%
+  add_lines(y=data$Prog..Semanal,name=colnames(data)[4])</code></pre>
+<div id="htmlwidget-1" style="width:672px;height:480px;" class="plotly html-widget"></div>
+<script type="application/json" data-for="htmlwidget-1">{"x":{"visdat":{"2620793b7e3":["function () ","plotlyVisDat"]},"cur_data":"2620793b7e3","attrs":{"2620793b7e3":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"y":["5707.899","5581.516","5502.963","5446.029","5431.983","5336.157","5335.622","5453.998","5433.286","5558.306","5618.549","5745.884","5854.484","5902.856","6042.609","6131.455","6290.284","6327.300","6473.991","6492.219","6514.354","6557.238","6596.702","6457.180","6428.338","6380.037","6371.433","6362.416","6496.155","6527.202","6498.804","6461.704","6411.215","6342.126","6308.774","6320.263","6620.420","6641.173","6663.883","6629.116","6645.121","6611.221","6533.995","6433.887","6305.152","6147.733","5965.219","5750.115"],"type":"scatter","mode":"lines","name":"Ejecutado","inherit":true},"2620793b7e3.1":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"y":["5756.119","5620.449","5553.468","5505.737","5458.534","5453.442","5413.634","5448.888","5457.138","5536.989","5660.641","5809.853","5989.030","6034.041","6124.928","6080.102","6266.160","6366.998","6450.978","6473.775","6506.999","6548.191","6559.088","6552.812","6435.162","6379.647","6345.030","6387.805","6458.295","6462.071","6495.844","6481.240","6483.802","6423.236","6452.846","6436.283","6650.325","6662.754","6655.113","6608.882","6575.048","6592.434","6583.854","6506.770","6381.899","6201.852","6073.723","5834.832"],"type":"scatter","mode":"lines","name":"Prog..Diaria","inherit":true},"2620793b7e3.2":{"x":{},"alpha_stroke":1,"sizes":[10,100],"spans":[1,20],"y":["5623.266","5623.266","5476.561","5476.561","5394.244","5394.244","5378.145","5378.145","5476.271","5476.271","5735.150","5735.150","6010.712","6010.712","6142.352","6142.352","6356.102","6356.102","6494.989","6494.989","6604.868","6604.868","6600.950","6600.950","6442.741","6442.741","6450.330","6450.330","6573.352","6573.352","6576.754","6576.754","6501.293","6501.293","6344.192","6344.192","6767.686","6767.686","6682.874","6682.874","6642.973","6642.973","6531.141","6531.141","6214.388","6214.388","5875.972","5875.972"],"type":"scatter","mode":"lines","name":"Prog..Semanal","inherit":true}},"layout":{"margin":{"b":40,"l":60,"t":25,"r":10},"xaxis":{"domain":[0,1],"automargin":true,"title":"date"},"yaxis":{"domain":[0,1],"automargin":true,"title":[],"type":"category","categoryorder":"array","categoryarray":["5335.622","5336.157","5378.145","5394.244","5413.634","5431.983","5433.286","5446.029","5448.888","5453.442","5453.998","5457.138","5458.534","5476.271","5476.561","5502.963","5505.737","5536.989","5553.468","5558.306","5581.516","5618.549","5620.449","5623.266","5660.641","5707.899","5735.150","5745.884","5750.115","5756.119","5809.853","5834.832","5854.484","5875.972","5902.856","5965.219","5989.030","6010.712","6034.041","6042.609","6073.723","6080.102","6124.928","6131.455","6142.352","6147.733","6201.852","6214.388","6266.160","6290.284","6305.152","6308.774","6320.263","6327.300","6342.126","6344.192","6345.030","6356.102","6362.416","6366.998","6371.433","6379.647","6380.037","6381.899","6387.805","6411.215","6423.236","6428.338","6433.887","6435.162","6436.283","6442.741","6450.330","6450.978","6452.846","6457.180","6458.295","6461.704","6462.071","6473.775","6473.991","6481.240","6483.802","6492.219","6494.989","6495.844","6496.155","6498.804","6501.293","6506.770","6506.999","6514.354","6527.202","6531.141","6533.995","6548.191","6552.812","6557.238","6559.088","6573.352","6575.048","6576.754","6583.854","6592.434","6596.702","6600.950","6604.868","6608.882","6611.221","6620.420","6629.116","6641.173","6642.973","6645.121","6650.325","6655.113","6662.754","6663.883","6682.874","6767.686"]},"hovermode":"closest","showlegend":true},"source":"A","config":{"showSendToCloud":false},"data":[{"x":["2019-09-17 00:30:00","2019-09-17 01:00:00","2019-09-17 01:30:00","2019-09-17 02:00:00","2019-09-17 02:30:00","2019-09-17 03:00:00","2019-09-17 03:30:00","2019-09-17 04:00:00","2019-09-17 04:30:00","2019-09-17 05:00:00","2019-09-17 05:30:00","2019-09-17 06:00:00","2019-09-17 06:30:00","2019-09-17 07:00:00","2019-09-17 07:30:00","2019-09-17 08:00:00","2019-09-17 08:30:00","2019-09-17 09:00:00","2019-09-17 09:30:00","2019-09-17 10:00:00","2019-09-17 10:30:00","2019-09-17 11:00:00","2019-09-17 11:30:00","2019-09-17 12:00:00","2019-09-17 12:30:00","2019-09-17 13:00:00","2019-09-17 13:30:00","2019-09-17 14:00:00","2019-09-17 14:30:00","2019-09-17 15:00:00","2019-09-17 15:30:00","2019-09-17 16:00:00","2019-09-17 16:30:00","2019-09-17 17:00:00","2019-09-17 17:30:00","2019-09-17 18:00:00","2019-09-17 18:30:00","2019-09-17 19:00:00","2019-09-17 19:30:00","2019-09-17 20:00:00","2019-09-17 20:30:00","2019-09-17 21:00:00","2019-09-17 21:30:00","2019-09-17 22:00:00","2019-09-17 22:30:00","2019-09-17 23:00:00","2019-09-17 23:30:00","2019-09-18 00:00:00"],"y":["5707.899","5581.516","5502.963","5446.029","5431.983","5336.157","5335.622","5453.998","5433.286","5558.306","5618.549","5745.884","5854.484","5902.856","6042.609","6131.455","6290.284","6327.300","6473.991","6492.219","6514.354","6557.238","6596.702","6457.180","6428.338","6380.037","6371.433","6362.416","6496.155","6527.202","6498.804","6461.704","6411.215","6342.126","6308.774","6320.263","6620.420","6641.173","6663.883","6629.116","6645.121","6611.221","6533.995","6433.887","6305.152","6147.733","5965.219","5750.115"],"type":"scatter","mode":"lines","name":"Ejecutado","marker":{"color":"rgba(31,119,180,1)","line":{"color":"rgba(31,119,180,1)"}},"error_y":{"color":"rgba(31,119,180,1)"},"error_x":{"color":"rgba(31,119,180,1)"},"line":{"color":"rgba(31,119,180,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2019-09-17 00:30:00","2019-09-17 01:00:00","2019-09-17 01:30:00","2019-09-17 02:00:00","2019-09-17 02:30:00","2019-09-17 03:00:00","2019-09-17 03:30:00","2019-09-17 04:00:00","2019-09-17 04:30:00","2019-09-17 05:00:00","2019-09-17 05:30:00","2019-09-17 06:00:00","2019-09-17 06:30:00","2019-09-17 07:00:00","2019-09-17 07:30:00","2019-09-17 08:00:00","2019-09-17 08:30:00","2019-09-17 09:00:00","2019-09-17 09:30:00","2019-09-17 10:00:00","2019-09-17 10:30:00","2019-09-17 11:00:00","2019-09-17 11:30:00","2019-09-17 12:00:00","2019-09-17 12:30:00","2019-09-17 13:00:00","2019-09-17 13:30:00","2019-09-17 14:00:00","2019-09-17 14:30:00","2019-09-17 15:00:00","2019-09-17 15:30:00","2019-09-17 16:00:00","2019-09-17 16:30:00","2019-09-17 17:00:00","2019-09-17 17:30:00","2019-09-17 18:00:00","2019-09-17 18:30:00","2019-09-17 19:00:00","2019-09-17 19:30:00","2019-09-17 20:00:00","2019-09-17 20:30:00","2019-09-17 21:00:00","2019-09-17 21:30:00","2019-09-17 22:00:00","2019-09-17 22:30:00","2019-09-17 23:00:00","2019-09-17 23:30:00","2019-09-18 00:00:00"],"y":["5756.119","5620.449","5553.468","5505.737","5458.534","5453.442","5413.634","5448.888","5457.138","5536.989","5660.641","5809.853","5989.030","6034.041","6124.928","6080.102","6266.160","6366.998","6450.978","6473.775","6506.999","6548.191","6559.088","6552.812","6435.162","6379.647","6345.030","6387.805","6458.295","6462.071","6495.844","6481.240","6483.802","6423.236","6452.846","6436.283","6650.325","6662.754","6655.113","6608.882","6575.048","6592.434","6583.854","6506.770","6381.899","6201.852","6073.723","5834.832"],"type":"scatter","mode":"lines","name":"Prog..Diaria","marker":{"color":"rgba(255,127,14,1)","line":{"color":"rgba(255,127,14,1)"}},"error_y":{"color":"rgba(255,127,14,1)"},"error_x":{"color":"rgba(255,127,14,1)"},"line":{"color":"rgba(255,127,14,1)"},"xaxis":"x","yaxis":"y","frame":null},{"x":["2019-09-17 00:30:00","2019-09-17 01:00:00","2019-09-17 01:30:00","2019-09-17 02:00:00","2019-09-17 02:30:00","2019-09-17 03:00:00","2019-09-17 03:30:00","2019-09-17 04:00:00","2019-09-17 04:30:00","2019-09-17 05:00:00","2019-09-17 05:30:00","2019-09-17 06:00:00","2019-09-17 06:30:00","2019-09-17 07:00:00","2019-09-17 07:30:00","2019-09-17 08:00:00","2019-09-17 08:30:00","2019-09-17 09:00:00","2019-09-17 09:30:00","2019-09-17 10:00:00","2019-09-17 10:30:00","2019-09-17 11:00:00","2019-09-17 11:30:00","2019-09-17 12:00:00","2019-09-17 12:30:00","2019-09-17 13:00:00","2019-09-17 13:30:00","2019-09-17 14:00:00","2019-09-17 14:30:00","2019-09-17 15:00:00","2019-09-17 15:30:00","2019-09-17 16:00:00","2019-09-17 16:30:00","2019-09-17 17:00:00","2019-09-17 17:30:00","2019-09-17 18:00:00","2019-09-17 18:30:00","2019-09-17 19:00:00","2019-09-17 19:30:00","2019-09-17 20:00:00","2019-09-17 20:30:00","2019-09-17 21:00:00","2019-09-17 21:30:00","2019-09-17 22:00:00","2019-09-17 22:30:00","2019-09-17 23:00:00","2019-09-17 23:30:00","2019-09-18 00:00:00"],"y":["5623.266","5623.266","5476.561","5476.561","5394.244","5394.244","5378.145","5378.145","5476.271","5476.271","5735.150","5735.150","6010.712","6010.712","6142.352","6142.352","6356.102","6356.102","6494.989","6494.989","6604.868","6604.868","6600.950","6600.950","6442.741","6442.741","6450.330","6450.330","6573.352","6573.352","6576.754","6576.754","6501.293","6501.293","6344.192","6344.192","6767.686","6767.686","6682.874","6682.874","6642.973","6642.973","6531.141","6531.141","6214.388","6214.388","5875.972","5875.972"],"type":"scatter","mode":"lines","name":"Prog..Semanal","marker":{"color":"rgba(44,160,44,1)","line":{"color":"rgba(44,160,44,1)"}},"error_y":{"color":"rgba(44,160,44,1)"},"error_x":{"color":"rgba(44,160,44,1)"},"line":{"color":"rgba(44,160,44,1)"},"xaxis":"x","yaxis":"y","frame":null}],"highlight":{"on":"plotly_click","persistent":false,"dynamic":false,"selectize":false,"opacityDim":0.2,"selected":{"opacity":1},"debounce":0},"shinyEvents":["plotly_hover","plotly_click","plotly_selected","plotly_relayout","plotly_brushed","plotly_brushing","plotly_clickannotation","plotly_doubleclick","plotly_deselect","plotly_afterplot","plotly_sunburstclick"],"base_url":"https://plot.ly"},"evals":[],"jsHooks":[]}</script>
+<p>Puedes descargar el código fuente <a href="https://github.com/eddyrene/dinamic_scraping_R">aqui</a> . No olvides descargar y posicionar el ejecutable de phantomjs.</p>
+</div>
+
+		</div>
+	</article>
+</main>
+
+<div class="authorbox clearfix">
+	<figure class="authorbox__avatar">
+		<img alt="Eddy Rene avatar" src="/img/eddy.png" class="avatar" height="90" width="90">
+	</figure>
+	<div class="authorbox__header">
+		<span class="authorbox__name">About Eddy Rene</span>
+	</div>
+	<div class="authorbox__description">
+		Eddy tiene experiencia en recuperación, visualización y análisis de  datos en procesamiento de minerales
+	</div>
+</div>
+
+<nav class="pager flex">
+	<div class="pager__item pager__item--prev">
+		<a class="pager__link" href="/post/los-mejores-a%C3%B1os-de-tu-vida/" rel="prev">
+			<span class="pager__subtitle">«&thinsp;Previous</span>
+			<p class="pager__title">Los mejores años de tu vida</p>
+		</a>
+	</div>
+	<div class="pager__item pager__item--next">
+		<a class="pager__link" href="/post/empieza-tu-an%C3%A1lisis-en-pi-system-con-r/" rel="next">
+			<span class="pager__subtitle">Next&thinsp;»</span>
+			<p class="pager__title">Empieza tu análisis en Pi System con R</p>
+		</a>
+	</div>
+</nav>
+
+
+			</div>
+			<aside class="sidebar"><div class="widget-search widget">
+	<form class="widget-search__form" role="search" method="get" action="https://google.com/search">
+		<label>
+			<input class="widget-search__field" type="search" placeholder="SEARCH..." value="" name="q" aria-label="SEARCH...">
+		</label>
+		<input class="widget-search__submit" type="submit" value="Search">
+		<input type="hidden" name="sitesearch" value="/" />
+	</form>
+</div>
+<div class="widget-recent widget">
+	<h4 class="widget__title">Recent Posts</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item"><a class="widget__link" href="/post/empieza-tu-an%C3%A1lisis-en-pi-system-con-r/">Empieza tu análisis en Pi System con R</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/web-scraping-con-r/">Web Scraping con R </a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/los-mejores-a%C3%B1os-de-tu-vida/">Los mejores años de tu vida</a></li>
+			<li class="widget__item"><a class="widget__link" href="/post/pasando-el-tiempo-en-libros/">Pasando el tiempo en libros</a></li>
+		</ul>
+	</div>
+</div>
+<div class="widget-categories widget">
+	<h4 class="widget__title">Categories</h4>
+	<div class="widget__content">
+		<ul class="widget__list">
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/carrera-personal/">Carrera Personal</a>
+			</li>
+			<li class="widget__item">
+				<a class="widget__link" href="/categories/r/">R</a>
+			</li>
+		</ul>
+	</div>
+</div>
+<div class="widget-taglist widget">
+	<h4 class="widget__title">Tags</h4>
+	<div class="widget__content">
+		<a class="widget-taglist__link widget__link btn" href="/tags/osisoft/" title="Osisoft">Osisoft</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/pi-system/" title="Pi System">Pi System</a>
+		<a class="widget-taglist__link widget__link btn" href="/tags/r/" title="R">R</a>
+	</div>
+</div>
+<div class="widget-social widget">
+	<h4 class="widget-social__title widget__title">Social</h4>
+	<div class="widget-social__content widget__content">
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="LinkedIn" rel="noopener noreferrer" href="https://linkedin.com/in/eddyrenec/" target="_blank">
+				<svg class="widget-social__link-icon icon icon-linkedin" width="24" height="24" viewBox="0 0 352 352"><path d="M0,40v272c0,21.9,18.1,40,40,40h272c21.9,0,40-18.1,40-40V40c0-21.9-18.1-40-40-40H40C18.1,0,0,18.1,0,40z M312,32 c4.6,0,8,3.4,8,8v272c0,4.6-3.4,8-8,8H40c-4.6,0-8-3.4-8-8V40c0-4.6,3.4-8,8-8H312z M59.5,87c0,15.2,12.3,27.5,27.5,27.5 c15.2,0,27.5-12.3,27.5-27.5c0-15.2-12.3-27.5-27.5-27.5C71.8,59.5,59.5,71.8,59.5,87z M187,157h-1v-21h-45v152h47v-75 c0-19.8,3.9-39,28.5-39c24.2,0,24.5,22.4,24.5,40v74h47v-83.5c0-40.9-8.7-72-56.5-72C208.5,132.5,193.3,145.1,187,157z M64,288h47.5 V136H64V288z"/></svg>
+				<span>LinkedIn</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="GitHub" rel="noopener noreferrer" href="https://github.com/eddyrene" target="_blank">
+				<svg class="widget-social__link-icon icon icon-github" width="24" height="24" viewBox="0 0 384 374"><path d="m192 0c-106.1 0-192 85.8-192 191.7 0 84.7 55 156.6 131.3 181.9 9.6 1.8 13.1-4.2 13.1-9.2 0-4.6-.2-16.6-.3-32.6-53.4 11.6-64.7-25.7-64.7-25.7-8.7-22.1-21.3-28-21.3-28-17.4-11.9 1.3-11.6 1.3-11.6 19.3 1.4 29.4 19.8 29.4 19.8 17.1 29.3 44.9 20.8 55.9 15.9 1.7-12.4 6.7-20.8 12.2-25.6-42.6-4.8-87.5-21.3-87.5-94.8 0-20.9 7.5-38 19.8-51.4-2-4.9-8.6-24.3 1.9-50.7 0 0 16.1-5.2 52.8 19.7 15.3-4.2 31.7-6.4 48.1-6.5 16.3.1 32.7 2.2 48.1 6.5 36.7-24.8 52.8-19.7 52.8-19.7 10.5 26.4 3.9 45.9 1.9 50.7 12.3 13.4 19.7 30.5 19.7 51.4 0 73.7-44.9 89.9-87.7 94.6 6.9 5.9 13 17.6 13 35.5 0 25.6-.2 46.3-.2 52.6 0 5.1 3.5 11.1 13.2 9.2 76.2-25.5 131.2-97.3 131.2-182 0-105.9-86-191.7-192-191.7z"/></svg>
+				<span>GitHub</span>
+			</a>
+		</div>
+		<div class="widget-social__item widget__item">
+			<a class="widget-social__link widget__link btn" title="Email" href="mailto:eddy.rene.c@gmail.com">
+				<svg class="widget-social__link-icon icon icon-mail" width="24" height="24" viewBox="0 0 416 288"><path d="m0 16v256 16h16 384 16v-16-256-16h-16-384-16zm347 16-139 92.5-139-92.5zm-148 125.5 9 5.5 9-5.5 167-111.5v210h-352v-210z"/></svg>
+				<span>eddy.rene.c@gmail.com</span>
+			</a>
+		</div>
+
+		
+	</div>
+</div>
+</aside>
+		</div>
+		<footer class="footer">
+	<div class="container footer__container flex">
+		
+		<div class="footer__copyright">
+			&copy; 2020 EddyRene.
+			<span class="footer__copyright-credits">Generated with <a href="https://gohugo.io/" rel="nofollow noopener" target="_blank">Hugo</a> and <a href="https://github.com/Vimux/Mainroad/" rel="nofollow noopener" target="_blank">Mainroad</a> theme.</span>
+		</div>
+	</div>
+</footer>
+	</div>
+<script async defer src="/js/menu.js"></script>
+</body>
+</html>

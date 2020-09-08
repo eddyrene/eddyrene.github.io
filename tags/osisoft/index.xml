@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Osisoft on EddyRene</title>
+    <link>/tags/osisoft/</link>
+    <description>Recent content in Osisoft on EddyRene</description>
+    <generator>Hugo -- gohugo.io</generator>
+    <language>es-us</language>
+    <lastBuildDate>Mon, 17 Aug 2020 00:00:00 +0000</lastBuildDate>
+    
+	<atom:link href="/tags/osisoft/index.xml" rel="self" type="application/rss+xml" />
+    
+    
+    <item>
+      <title>Empieza tu análisis en Pi System con R</title>
+      <link>/post/empieza-tu-an%C3%A1lisis-en-pi-system-con-r/</link>
+      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/empieza-tu-an%C3%A1lisis-en-pi-system-con-r/</guid>
+      <description>Si trabajas en una industria que utiliza la suite Pi System de Osisoft para historizar los datos este tutorial es para ti, si no igual leelo, aprederás algo.
+Quizas tienes ganas de ir mas allá de analisis con excel, utilizando datos con el datalink, y te haz preguntando como puedes trabajar de una manera más eficiente, utilizar mas datos y poder ver lo que pasa en tu proceso, entonces empecemos.</description>
+    </item>
+    
+  </channel>
+</rss>

@@ -1,29 +1,39 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Posts on Eddy Rene</title>
+    <title>Posts on EddyRene</title>
     <link>/post/</link>
-    <description>Recent content in Posts on Eddy Rene</description>
+    <description>Recent content in Posts on EddyRene</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>es</language>
-    <lastBuildDate>Sat, 21 Sep 2019 00:00:00 +0000</lastBuildDate>
+    <language>es-us</language>
+    <lastBuildDate>Mon, 17 Aug 2020 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/post/index.xml" rel="self" type="application/rss+xml" />
     
     
     <item>
+      <title>Empieza tu análisis en Pi System con R</title>
+      <link>/post/empieza-tu-an%C3%A1lisis-en-pi-system-con-r/</link>
+      <pubDate>Mon, 17 Aug 2020 00:00:00 +0000</pubDate>
+      
+      <guid>/post/empieza-tu-an%C3%A1lisis-en-pi-system-con-r/</guid>
+      <description>Si trabajas en una industria que utiliza la suite Pi System de Osisoft para historizar los datos este tutorial es para ti, si no igual leelo, aprederás algo.
+Quizas tienes ganas de ir mas allá de analisis con excel, utilizando datos con el datalink, y te haz preguntando como puedes trabajar de una manera más eficiente, utilizar mas datos y poder ver lo que pasa en tu proceso, entonces empecemos.</description>
+    </item>
+    
+    <item>
       <title>Web Scraping con R </title>
-      <link>/post/web-scraping-in-r/</link>
+      <link>/post/web-scraping-con-r/</link>
       <pubDate>Sat, 21 Sep 2019 00:00:00 +0000</pubDate>
       
-      <guid>/post/web-scraping-in-r/</guid>
-      <description>Obten datos de una pagina web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas.</description>
+      <guid>/post/web-scraping-con-r/</guid>
+      <description>Obtén datos de una página web dinámicaUna de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas.</description>
     </item>
     
     <item>
       <title>Los mejores años de tu vida</title>
       <link>/post/los-mejores-a%C3%B1os-de-tu-vida/</link>
-      <pubDate>Fri, 05 Apr 2019 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/los-mejores-a%C3%B1os-de-tu-vida/</guid>
       <description>Quisiera contarles algo que aprendí en estos últimos meses, pero para empezar necesitamos ponernos en contexto.
@@ -37,17 +47,6 @@ Después de haber terminado el intercambio regresé a mi ciudad Arequipa en Per�
       
       <guid>/post/pasando-el-tiempo-en-libros/</guid>
       <description>Esta es la segunda entrada al blog del año, y ya hace tiempo que queria escribir sobre esto, pero la verdad es que no me daba el tiempo para hacerlo, hasta que hoy finalmente me decidí y quiero contarles algo que es mi meta personal para este 2019. A mediados del 2018, descrubri el sitio de Goodreads y quedé fascinado (puedes revisar mi compromiso y conocerme un poco más aquí ) me puse una meta de 10 libros para terminar ese año.</description>
-    </item>
-    
-    <item>
-      <title>Bienvenido</title>
-      <link>/post/bienvenido/</link>
-      <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/post/bienvenido/</guid>
-      <description>Hola!
-Me siento muy entusiasmado por este proyecto de blog que oficialmente arranca hoy, y bueno en este espacio llamado Carrera Personal, compartiré todas esas ideas que desde mi punto de vista, pueden ayudar a cualquier persona a mejorar su vida, haciéndola más interesante y productiva.
-Anteriormente he estado escribiendo en NoCreasNada, (puedes echar un vistaso aquí) y sinceramente me ha gustado el tiempo que he pasado ahí, pero ahora tomé el valor para empezar mi propio blog.</description>
     </item>
     
   </channel>

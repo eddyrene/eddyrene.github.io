@@ -1,0 +1,96 @@
+---
+title: 'Web Scraping con R '
+author: Eddy Rene
+date: '2019-09-21'
+slug: web-scraping-con-r
+categories:
+  - R
+tags: []
+description: ''
+thumbnail: img/webscraping.png
+---
+
+
+# Obtén datos de una página web dinámica
+
+Una de las cosas interesantes cuando se analiza datos es querer comparar datos propios con datos abiertos de la web, lo que conocemos como Web Scraping. Cuando iniciamos nuestro primer objetivo son las páginas que tienen los datos en texto plano Html, en R con el uso de la librería Rvest nos es relativamente sencillo obtener los datos en un dataframe y luego trabajar en con ellas. Pero, ¿Qué pasa con las páginas que para mostrar sus datos ejecutan primero un código JavaScript?
+
+En este tutorial veremos como obtener datos desde este tipo de páginas combinando las bondades de Phantomjs y el ya mencionado Rvest. El ejemplo consiste en obtener los datos del **Comité de Operación Económica del Sistema Interconectado Nacional (COES)** y graficaremos el resultado.
+
+Instalar dependencias:
+
+  1. Instalar Rvest : install.packages(“rvest”)
+  2. Descargar Phantomjs :  [link]( https://phantomjs.org/download.html ) 
+  
+En el caso de Windows ubicar el instalador en el directorio donde se encuentra el programa. Necesitamos ejecutar el código JavaScript que contiene la página para renderizar los datos y lo hacemos con el siguiente código, lo llamaremos **“scrape_page.js”**
+
+
+```{r eval=FALSE}
+var webPage = require('webpage');
+var page = webPage.create();
+var fs = require('fs');
+var path = 'coes.html'
+page.open('https://www.coes.org.pe/Portal/portalinformacion/demanda', function (status) {
+  var content = page.content;
+  fs.write(path,content,'w')
+  phantom.exit();
+});
+
+```
+
+En R escribimos el **“script scrape_data.R”** para ejecutar el JavaScript. y almacenar la información
+
+
+```{r message=FALSE}
+
+library(rvest)
+library(tidyverse)
+library(stringi)
+
+#path to executable phantomjs
+#system("C:\..\\phantomjs.exe scrape_coes.js")
+
+paginawebca<-read_html("../../coes.html")
+selectorca<-"#contentHolder > table"
+nodo_tabla<-html_node(paginawebca,selectorca)
+nodo_tabla<-html_table(nodo_tabla)
+
+```
+Tienes que posicionarte en el directorio donde se encuentra el ejecutable. Phamtonjs renderizará los datos de la página y lo escribe en un archivo html, después con rvest buscamos la tabla de nuestro interés lo convertimos a un dataframe.
+
+```{r}
+
+head(nodo_tabla)
+
+```
+
+Filtramos los datos que deseamos
+
+```{r}
+data <- nodo_tabla[1:48,]
+data$Fecha <- str_replace_all(data$Fecha, "/", "-")
+data$Fecha <- as.character(strptime(as.character(data$Fecha),"%d-%m-%Y %H:%M"))
+data[2:4] <-data %>% select(2:4)%>%
+  mutate_all(str_replace_all," ","")%>%
+  mutate_all(str_replace_all,",",".")
+```
+
+Y el gráfico que obtenemos es
+
+```{r message=FALSE, warning=FALSE}
+
+library(plotly)
+library(dplyr)
+
+dates1 <- strptime(as.character(data$Fecha), "%Y-%m-%d %H:%M:%S")
+data <- data[,2:ncol(data)]  #tomamos la parte del dataframe con los valores
+data <- data.frame(date=dates1,data)  #Añadimos las fechas
+
+plot_ly(data,x = ~date)%>%
+  add_lines(y=data$Ejecutado, name=colnames(data)[2])%>%
+  add_lines(y=data$Prog..Diaria,name=colnames(data)[3])%>%
+  add_lines(y=data$Prog..Semanal,name=colnames(data)[4])
+
+```
+
+Puedes descargar el código fuente  [aqui](https://github.com/eddyrene/dinamic_scraping_R) . No olvides descargar y posicionar el ejecutable de phantomjs.

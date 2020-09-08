@@ -1,12 +1,12 @@
-<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>Carrera Personal on Eddy Rene</title>
+    <title>Carrera Personal on EddyRene</title>
     <link>/categories/carrera-personal/</link>
-    <description>Recent content in Carrera Personal on Eddy Rene</description>
+    <description>Recent content in Carrera Personal on EddyRene</description>
     <generator>Hugo -- gohugo.io</generator>
-    <language>es</language>
-    <lastBuildDate>Fri, 05 Apr 2019 00:00:00 +0000</lastBuildDate>
+    <language>es-us</language>
+    <lastBuildDate>Mon, 05 Aug 2019 00:00:00 +0000</lastBuildDate>
     
 	<atom:link href="/categories/carrera-personal/index.xml" rel="self" type="application/rss+xml" />
     
@@ -14,7 +14,7 @@
     <item>
       <title>Los mejores años de tu vida</title>
       <link>/post/los-mejores-a%C3%B1os-de-tu-vida/</link>
-      <pubDate>Fri, 05 Apr 2019 00:00:00 +0000</pubDate>
+      <pubDate>Mon, 05 Aug 2019 00:00:00 +0000</pubDate>
       
       <guid>/post/los-mejores-a%C3%B1os-de-tu-vida/</guid>
       <description>Quisiera contarles algo que aprendí en estos últimos meses, pero para empezar necesitamos ponernos en contexto.
@@ -28,17 +28,6 @@ Después de haber terminado el intercambio regresé a mi ciudad Arequipa en Per�
       
       <guid>/post/pasando-el-tiempo-en-libros/</guid>
       <description>Esta es la segunda entrada al blog del año, y ya hace tiempo que queria escribir sobre esto, pero la verdad es que no me daba el tiempo para hacerlo, hasta que hoy finalmente me decidí y quiero contarles algo que es mi meta personal para este 2019. A mediados del 2018, descrubri el sitio de Goodreads y quedé fascinado (puedes revisar mi compromiso y conocerme un poco más aquí ) me puse una meta de 10 libros para terminar ese año.</description>
-    </item>
-    
-    <item>
-      <title>Bienvenido</title>
-      <link>/post/bienvenido/</link>
-      <pubDate>Thu, 31 Jan 2019 00:00:00 +0000</pubDate>
-      
-      <guid>/post/bienvenido/</guid>
-      <description>Hola!
-Me siento muy entusiasmado por este proyecto de blog que oficialmente arranca hoy, y bueno en este espacio llamado Carrera Personal, compartiré todas esas ideas que desde mi punto de vista, pueden ayudar a cualquier persona a mejorar su vida, haciéndola más interesante y productiva.
-Anteriormente he estado escribiendo en NoCreasNada, (puedes echar un vistaso aquí) y sinceramente me ha gustado el tiempo que he pasado ahí, pero ahora tomé el valor para empezar mi propio blog.</description>
     </item>
     
   </channel>

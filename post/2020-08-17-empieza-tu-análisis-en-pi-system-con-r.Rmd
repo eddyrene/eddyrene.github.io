@@ -1,0 +1,160 @@
+---
+title: 'Empieza tu análisis en Pi System con R'
+author: Eddy Rene
+date: '2020-08-17'
+slug: empieza-tu-análisis-en-pi-system-con-r
+categories:
+  - R
+tags:
+  - Pi System
+  - Osisoft
+  - R
+description: ''
+thumbnail: img/R_Pi.png 
+---
+
+Si trabajas en una industria que utiliza la suite Pi System de Osisoft para historizar los datos este tutorial es para ti, si no igual leelo, aprederás algo. 
+
+Quizas tienes ganas de ir mas allá de analisis con excel, utilizando datos con el datalink, y te haz preguntando como puedes trabajar de una manera más eficiente, utilizar mas datos y poder ver lo que pasa en tu proceso, entonces empecemos.
+
+Este tutorial sigue los pasos explicados en este [post](https://github.com/rbechalany/PI-Web-API-Client-R), para mayor puedes consultar el artículo completo.
+
+# Requisitos
+
+   1. R 3.4.3+ ( funciona perfecto con la versión 4.0.0 [link](https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe))
+   
+   2. PI Web APi Client R [link](https://github.com/rbechalany/PI-Web-API-Client-R)
+   
+# Instalación 
+Una vez instalado R y de preferencia utilizando RStudio como IDE para programar. 
+El primer paso es instalar una herramienta que nos permitirá instalar el paquete de conexión que no se encuentra en CRAN.
+
+```{r eval=FALSE}
+  install.packages("devtools")
+```
+Luego, levantamos la librería instalada e instalamos el packete PI Web API R desde 
+
+```{r eval=FALSE}
+library(devtools)
+install_github("rbechalany/PI-Web-API-Client-R")
+```
+
+Para probar que funciona: 
+```{r eval=FALSE}
+library(piwebapi)
+
+```
+
+Con esto funcionando podemos empezar.
+
+# Conexión
+
+Previamente deberás de asegurarte que tipo autenticación está definida en los servidores Pi para la conexión con Pi Web APi (bastaria con probar las dos opciones [aqui](https://cran.r-project.org/bin/windows/base/R-4.0.2-win.exe) mostradas). Encontré un servicio con **autenticación basic** que usaremos y con el que podremos hacer algunos experimentos.
+
+
+```{r message=FALSE, warning=FALSE}
+library(piwebapi)
+
+useKerberos <- FALSE
+username <- "webapiuser"
+password <- "!try3.14webapi!"
+validateSSL <- TRUE
+debug <- TRUE
+piWebApiService <- piwebapi$new("https://devdata.osisoft.com/piwebapi", useKerberos, username, password, validateSSL, debug)
+
+```
+Para probar que la conexión funciona correctamente
+
+```{r message=FALSE, warning=FALSE}
+
+response1 = piWebApiService$home$get()
+response1
+
+```
+Los valores obtenidos vienen a ser los mismos si ingresamos directamente a https://devdata.osisoft.com/piwebapi y utilizamos las credenciales mostradas líneas arriba. 
+
+
+# consulta de datos
+
+Los métodos principales de recuperación de datos son "Recorded" para datos compresos e "Interpolated" valores y podemos elejir entre consultar uno o varios al mismo tiempo
+
+```{r message=FALSE, warning=FALSE}
+
+data <- piWebApiService$data$getRecordedValues(path = "pi:\\\\PISRV1\\BA:TEMP.1",
+                                                     startTime = "t-10d", endTime = "t",
+                                                    maxCount = 90000,timeZone = "America/Lima")
+
+head(data)
+```
+
+Para consultar datos interpolados y mantenernos solo con los valores podemos usar 
+
+```{r message=FALSE, warning=FALSE}
+library("dplyr")
+
+paths <-c("pi:\\\\PISRV1\\BA:ACTIVE.1",
+          "pi:\\\\PISRV1\\BA:CONC.1",
+          "pi:\\\\PISRV1\\BA:LEVEL.1",
+          "pi:\\\\PISRV1\\BA:TEMP.1")
+
+data2 <- piWebApiService$data$getMultipleInterpolatedValues(paths = paths, startTime = "t-2d", endTime = "t",
+                                                            interval = "1m",timeZone = "America/Lima")%>%
+  select("timestamp","value1","value2","value3","value4")
+
+head(data2)
+```
+
+# EDA (Exploratory Data Analisis)
+
+Una vez recuperada la data podemos visualizarla y hacer una exploración preliminar, como ver la tendencia de alguna señar en particular 
+
+```{r message=FALSE, warning=FALSE}
+
+colnames(data2) <- c("TimeStamp","Activate_Reactor","Conc_Reactor_1",
+                     "Level_Reactor_1","Temperature_Reactor_1") 
+
+library("ggplot2")
+
+data2 <- data2 %>%
+  mutate(Activate_Reactor = ifelse(Activate_Reactor=="Inactive",0,1)) %>%
+  mutate(TimeStamp= as.POSIXct(TimeStamp,format="%Y-%m-%dT%H:%M:%OS"))
+
+data2 %>% 
+  ggplot()+
+  geom_line(aes(x=TimeStamp, y=Temperature_Reactor_1))
+
+```
+O ver los histogramas de todas las variables
+
+```{r message=FALSE, warning=FALSE}
+
+library("tidyr")
+data2 %>%
+  select(-c(TimeStamp))%>%
+  gather() %>%
+  ggplot(aes(value)) + 
+  geom_histogram(bins = 10) + 
+  facet_wrap(~key, scales = 'free_x')
+
+```
+
+Una de mis favoritas herramientas es usar plotly para ver las tendencias 
+
+```{r message=FALSE, warning=FALSE}
+library("plotly")
+
+data.graph = data2
+
+a <- data.graph %>%
+  tidyr::gather(variable, value, -TimeStamp) %>%
+  transform(id = as.integer(factor(variable))) %>%
+    plot_ly(x = ~TimeStamp, y = ~value, color = ~variable, colors = "Dark2",
+          yaxis = ~paste0("y", id)) %>%
+  add_lines() %>%
+  subplot(nrows = ncol(data.graph)-1, shareX = TRUE)
+
+a %>% layout(legend = list(orientation = 'h'))
+
+```
+
+Con esto podrias iniciar tu camino por la exploración y analisis de datos, espero te ayude. Si tienes consultas puedes enviarme un email y apenas pueda te constestaré.  
